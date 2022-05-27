@@ -31,12 +31,12 @@ class TikTokScraper:
         new_height = self.driver.find_elements(By.CLASS_NAME, "tiktok-16r0vzi-DivCommentItemContainer")
 
         # scrolls until no more comments load
-        while len(new_height) is not previous_height:
+        while len(new_height) != previous_height:
             previous_height = len(new_height)
 
             # scrolls to bottom of the page
             self.driver.execute_script("window.scrollTo(0,document.body.scrollHeight)")
-            time.sleep(2)
+            time.sleep(1)
 
             # gets all comments currently loaded
             new_height = self.driver.find_elements(By.CLASS_NAME, "tiktok-16r0vzi-DivCommentItemContainer")
@@ -52,8 +52,10 @@ class TikTokScraper:
             for comment in comment_blocks:
 
                 # grabs the username of the level 1 comment
-                username = comment.find_element(By.CLASS_NAME, "tiktok-1n2c527-StyledUserLinkName")
-                username_text = username.text
+                username = comment.find_element(By.TAG_NAME, "a")
+                username_text = username.get_attribute("href")
+                start_name = username_text.find('@')
+                username_text = username_text[start_name:]
 
                 # grabs comment text of level 1 comment
                 user_comment = comment.find_element(By.TAG_NAME, 'p')
@@ -62,13 +64,14 @@ class TikTokScraper:
                 # creates item to be used for DictWriter
                 row = {'Username' : username_text, 'Comment' : user_comment_text}
                 the_writer.writerow(row)
+                print(row)
             print("done with " + url)
 
 # list of TikTok posts to grab comments from
 posts = [""]
 TikTokScraper = TikTokScraper()
 
-# location where you want the .csv to be written to
+# location where you want the .csv to be written to. should end with \\
 filepath = ''
 
 # iterates through all posts
@@ -80,5 +83,5 @@ for post in posts:
     post_id = post[start+6:stop]
 
     # creates csv filename
-    output_file = 'comments_' + post_id + '.csv'
+    output_file = '\\comments_' + post_id + '.csv'
     TikTokScraper.write_to_csv(filepath + output_file, post)
