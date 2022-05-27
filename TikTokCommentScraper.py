@@ -2,7 +2,6 @@ from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.common.by import By
 from webdriver_manager.chrome import ChromeDriverManager
-from webdriver_manager.utils import ChromeType
 import csv
 import time
 
@@ -10,7 +9,7 @@ class TikTokScraper:
 
     def __init__(self):
         self.PATH = "chromedriver.exe"
-        self.driver = webdriver.Chrome(service=Service(ChromeDriverManager(chrome_type=ChromeType.BRAVE).install()))
+        self.driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()))
         self.text = ""
         self.data = {}
 
